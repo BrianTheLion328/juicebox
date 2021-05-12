@@ -221,6 +221,20 @@ async function createPostTag(postId, tagId) {
     throw error;
   }
 }
+
+async function getAllTags() {
+  try {
+    const { rows } = await client.query(`
+      SELECT *
+      FROM tags;
+    `);
+
+    return rows;
+  } catch (error) {
+    throw error;
+  }
+}
+
 async function addTagsToPost(postId, tagList) {
   try {
     const createPostTagPromises = tagList.map((tag) =>
@@ -288,6 +302,9 @@ async function getPostsByTagName(tagName) {
     throw error;
   }
 }
+
+
+
 module.exports = {
   client,
   createUser,
@@ -303,4 +320,5 @@ module.exports = {
   addTagsToPost,
   getPostById,
   getPostsByTagName,
+  getAllTags
 };
