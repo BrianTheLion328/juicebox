@@ -1,47 +1,37 @@
-const express = require('express');
+const { PORT = 3000 } = process.env;
+const express = require("express");
 const server = express();
-const PORT = 3000;
+server.use(express.json());
+const morgan = require("morgan");
+server.use(morgan("dev"));
+require("dotenv").config();
+const dino = `               __
+              / _)
+     _.----._/ /
+    /         /
+ __/ (  | (  |
+/__.-'|_|--|_|
+`;
 
-const apiRouter = require('./api');
-server.use('/api', apiRouter);
+server.use((req, res, next) => {
+  const now = Date.now();
+  req.timeOfRequest = now;
+  console.log("<____Body Logger START____>");
+  console.log(req.body);
+  console.log("<_____Body Logger END_____>");
 
-const bodyParser = require('body-parser');
-server.use(bodyParser.json());
+  next();
+});
 
-const morgan = require('morgan');
-server.use(morgan('dev'));
+const apiRouter = require("./api");
+server.use("/api", apiRouter);
 
-const { client } = require('./db');
+const { client } = require("./db");
 client.connect();
 
-
-server.use((request, response, next) =>{
-    console.log("<_____ Body Logger START_____>");
-    console.log(request.body);
-    console.log("<_____ Body Logger END_____>");
-
-    next();
-});
-
-// server.get('/', (request, response, next) => {
-//     response.send("Alex + Mom");
-// })
-
-// server.use('/api', (request, response, next) => {
-//     console.log("A request was made to /api (this is the middleware).");
-//     next();
-// });
-
-// server.get('/api', (request, response, next) => {
-//     console.log("A get request was made to /api");
-//     response.send({message: "success"});
-// });
-
-// server.post('/api/burrito', (request, response, next) => {
-//     response.send({message: "Carne Asada con Salsa"});
-// });
-
-
 server.listen(PORT, () => {
-    console.log('The server is up on port', PORT);
+  console.log("The server is up on port", PORT);
+  console.log(dino);
 });
+
+
